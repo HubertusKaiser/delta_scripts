@@ -1,0 +1,6 @@
+This is for frog analysis
+
+just create a txt file with the name "temporal_plus_i.txt"
+
+then run read_laser_length.py
+then run temp_plot.py
