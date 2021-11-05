@@ -11,37 +11,36 @@ from PIL import Image
 import os
 from scipy.optimize import curve_fit
 
-### Multiple plots
-#Changing the working directory to the source directory
-abspath = os.path.abspath(__file__)
-dname = os.path.dirname(abspath)
-data_dir=r"C:\Users\arjun\OneDrive - Technische Universität Dortmund\DELTA\2021-10-15_CHG\mod_only\200 nm"  #Name of the directory that contains the spectra
-os.chdir(data_dir)
+
+wdir=r"C:\Users\arjun\OneDrive - Technische Universität Dortmund\DELTA\2021-10-15_CHG\mod_only\200 nm"  #Name of the directory that contains the spectra
+os.chdir(wdir)
 pwd=os.getcwd()
-#print(pwd)
-timescan= 0 #True
+
+timescan= 0 #True   # Assign it True if a time scan plot is required
 
 def gaussian(x,amp,mean,std):
     return (amp/np.sqrt(2*np.pi)/std)*np.exp(-(x - mean)**2/(2*std**2))
 
-N_sample= len(os.listdir()) #Total No.of spectra taken
-sample_rate= 1000/500 #No.of spectra taken per second
+N_sample= len(os.listdir())             #Total No.of spectra taken
 im_i=list(range(1,N_sample+1))
-I=np.linspace(1,max(im_i),len(im_i))
-r56=(0.2e-3 *I**2)+ (46e-3* I) +2.59 #e-3
+sample_rate= 2                          #No. of spectra taken per second
 
-###To set the prominent peak to 400 nm and calibrate the wavelength scale
-m=3.66466753e-02  #slope of pixel to wavelength relation
-wl_0=200 #central wavelength in nm
+I=np.linspace(1,max(im_i),len(im_i))
+r56=(0.2e-3 *I**2)+ (46e-3* I) +2.59    # Current to R56 relation 
+
+###  To set the prominent peak to the central wavelength and calibrate the wavelength scale   ###
+m=3.66466753e-02    #slope of pixel to wavelength relation
+wl_0=200            #central wavelength in nm
 im = Image.open('andor_X300.tif')
-pix=np.array(im)[200]
+imarray=np.array(im)
+pix=np.array(im)[int(imarray.shape[0]/2)]
 pix=pix-np.mean(pix[-10:])
 pix=pix/max(pix)
-lim=[0,1024]
+lim=[0,imarray.shape[1]]
 ydata=pix[lim[0]:lim[1]]
 xdata=np.array(list(range(lim[0],lim[1])))
-pars, cov = curve_fit(f=gaussian,xdata=xdata,ydata=ydata,p0=[1,600,50])
-x = np.linspace(0,1024, 1024)
+pars, cov = curve_fit(f=gaussian,xdata=xdata,ydata=ydata,p0=[1,imarray.shape[1]/2,50])
+x = np.linspace(0,imarray.shape[1], 1024)
 y = gaussian(x,pars[0],pars[1],pars[2])
 plt.plot(x, y)
 plt.plot(pix)
@@ -49,16 +48,13 @@ spec=m*(xdata-pars[1])+wl_0
 
 
 fig=plt.figure()
-bg=[]
 heatmap,heatmap_norm=[],[]
 for i in im_i:
     im = Image.open('andor_X'+str(i)+'.tif')
     imarray=np.array(im)
-    #bg.append(np.mean(imarray[-10:,-10:]))
-    imarray=imarray-np.mean(imarray[-20:,-20:]) #Subtracting background 
-    imsum=np.sum(imarray,axis=0) #[130:380] Summing only the illuminated rows of pixels
+    imarray=imarray-np.mean(imarray[-20:,-20:])     #Subtracting background 
+    imsum=np.sum(imarray,axis=0) #[130:380]         #Summing only the illuminated rows of pixels
     imsum_norm=imsum/max(imsum)
-    bg.append(max(imsum))
     heatmap.append(imsum)
     heatmap_norm.append(imsum_norm)
     
@@ -85,9 +81,9 @@ else:
 plt.xlabel('Wavelength (nm)')
 
 
-#os.chdir(dname)
-
 '''
+## To do the Fourier Transform ##
+
 xx=np.array(heatmap).T[493]
 plt.plot(xx)
 
