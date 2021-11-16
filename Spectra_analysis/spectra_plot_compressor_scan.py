@@ -71,6 +71,8 @@ for dirct in dir_list:
         imsum_norm=imsum/max(imsum)
         heatmap.append(imsum)
         heatmap_norm.append(imsum_norm)
+    if not os.path.isdir(pwd+"\\Processed"):
+        os.mkdir(pwd+"\\Processed")
     np.save(pwd+"\\Processed\\"+fname+"_normalized",heatmap_norm)
     np.save(pwd+"\\Processed\\"+fname,heatmap)
     fig.add_subplot(rows, columns, fig_i)
