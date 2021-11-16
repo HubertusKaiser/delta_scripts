@@ -84,7 +84,6 @@ for dirct in dir_list:
     plt.title(fname,loc='right',fontsize=9)
     
     fig_i+=1
-    bg_all.append(bg)
 plt.show()
 
 os.chdir(pwd)
