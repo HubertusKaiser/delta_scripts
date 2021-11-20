@@ -29,7 +29,7 @@ def get_names(local_path,arg_folderlist):
                     spectral=np.append(float(datContent[3][2].replace(",",".")), spectral)
                     timebandwidthproduct=np.append(float(datContent[4][3].replace(",",".")),timebandwidthproduct)
                     timebandwidthproduct_err=np.append(float(datContent[5][3].replace(",",".")),timebandwidthproduct_err)
-        write_file.write(str(np.sum(temporal)/len(temporal))+str(",")+str(np.std(temporal)+"\n")
+        write_file.write(str(np.sum(temporal)/len(temporal))+str(",")+str(np.std(temporal))+"\n")
 
 
     return datContent
