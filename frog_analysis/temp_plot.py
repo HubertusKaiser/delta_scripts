@@ -2,12 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 data=np.genfromtxt("temporal_plus_i.txt", delimiter=",")
-y=data[:,0]
-x=data[:,1]
+x=data[:,0]
+y=data[:,1]
+err=data[:,2]
 
-plt.plot(x,y, ".g", label="pulse length")
-plt.ylabel("pluse length")
-plt.xlabel("grating_dist")
+plt.errorbar(x,y,yerr=err,fmt=".g",elinewidth=1,capsize=7,markersize=10)
+plt.ylabel("pluse length (fs)")
+plt.xlabel("compressor length (mm)")
 plt.grid()
 plt.xticks(rotation=-45)
 plt.savefig("tempvschirp.pdf")
